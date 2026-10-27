@@ -1,0 +1,125 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { categoryHref, formatDate, href } from '../../consts';
+import { getPublishedArticles } from '../../lib/articles';
+
+export async function getStaticPaths() {
+  const articles = await getPublishedArticles();
+  return articles.map((article) => ({ params: { slug: article.id }, props: { article } }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+const { title, date, category, author, description } = article.data;
+---
+
+<Base title={title} description={description} current="articles">
+  <article class="page">
+    <header class="head">
+      <a class="tag" href={categoryHref(category)}>{category}</a>
+      <h1>{title}</h1>
+      <p class="meta">
+        <time datetime={date.toISOString()}>{formatDate(date)}</time>
+        <span>{author}</span>
+      </p>
+    </header>
+
+    <div class="body prose">
+      <Content />
+    </div>
+
+    <footer class="foot prose">
+      <a href={href('/articles/')}>記事の一覧に戻る</a>
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .head {
+    padding: 3rem 0 1.5rem;
+    border-bottom: 1px solid var(--washi-deep);
+    margin-bottom: 2rem;
+    max-width: var(--measure);
+  }
+  h1 {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    margin: 0.75rem 0 0.5rem;
+  }
+  .meta {
+    margin: 0;
+    color: var(--sumi-soft);
+    font-size: 0.9rem;
+    display: flex;
+    gap: 1.25rem;
+  }
+
+  /* Markdownで書いた本文の見た目 */
+  .body {
+    font-size: 1.02rem;
+  }
+  .body :global(h2) {
+    font-size: 1.4rem;
+    margin: 2.75rem 0 0.75rem;
+    padding-left: 0.75rem;
+    border-left: 4px solid var(--beni);
+  }
+  .body :global(h3) {
+    font-size: 1.15rem;
+    margin: 2rem 0 0.5rem;
+    color: var(--beni);
+  }
+  .body :global(p) {
+    margin: 0 0 1.25rem;
+  }
+  .body :global(ul),
+  .body :global(ol) {
+    padding-left: 1.4rem;
+    margin: 0 0 1.25rem;
+  }
+  .body :global(li + li) {
+    margin-top: 0.3rem;
+  }
+  .body :global(blockquote) {
+    margin: 0 0 1.25rem;
+    padding: 0.75rem 1.25rem;
+    background: #fbf6f1;
+    border-left: 4px solid var(--kin);
+    color: var(--sumi-soft);
+  }
+  .body :global(img) {
+    border-radius: 4px;
+    margin: 0.5rem 0 1.5rem;
+  }
+  .body :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 1.5rem;
+    font-size: 0.95rem;
+    display: block;
+    overflow-x: auto;
+  }
+  .body :global(th),
+  .body :global(td) {
+    border-bottom: 1px solid var(--washi-deep);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    white-space: nowrap;
+  }
+  .body :global(th) {
+    font-family: var(--font-mincho);
+    color: var(--beni);
+    border-bottom: 2px solid var(--kin);
+  }
+  .body :global(hr) {
+    border: 0;
+    height: 1px;
+    background: var(--washi-deep);
+    margin: 2.5rem 0;
+  }
+  .foot {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--washi-deep);
+  }
+</style>

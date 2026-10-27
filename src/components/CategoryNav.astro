@@ -1,0 +1,49 @@
+---
+import { CATEGORIES, categoryHref, href, type Category } from '../consts';
+
+interface Props {
+  current?: Category;
+}
+const { current } = Astro.props;
+---
+
+<nav class="categories" aria-label="カテゴリー">
+  <a href={href('/articles/')} aria-current={current ? undefined : 'page'}>すべて</a>
+  {
+    CATEGORIES.map((category) => (
+      <a
+        href={categoryHref(category)}
+        aria-current={current === category ? 'page' : undefined}
+      >
+        {category}
+      </a>
+    ))
+  }
+</nav>
+
+<style>
+  .categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  a {
+    font-size: 0.9rem;
+    padding: 0.25rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--washi-deep);
+    color: var(--sumi);
+    text-decoration: none;
+    background: #fbf6f1;
+  }
+  a:hover {
+    border-color: var(--beni);
+    color: var(--beni);
+  }
+  a[aria-current='page'] {
+    background: var(--beni);
+    border-color: var(--beni);
+    color: var(--washi);
+  }
+</style>

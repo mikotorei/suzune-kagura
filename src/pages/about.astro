@@ -1,0 +1,100 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, href } from '../consts';
+
+const promises = [
+  {
+    title: '無言すぎるのはNG',
+    body: '話す気分じゃない日があっても大丈夫。ただ、ずっと無言だとさみしいので、ときどきひとことでも声を聞かせてください。',
+  },
+  {
+    title: '毎日ログイン',
+    body: '毎日少しでもゲームに触れてもらうのが基本のノルマです。忙しい日はログインだけでも大丈夫。',
+  },
+  {
+    title: '戦闘力は問いません',
+    body: '初心者さんも大歓迎。わからないことは気軽に聞いてください。',
+  },
+  {
+    title: '製作・採集にご協力を',
+    body: 'ギルド艦船の建造には何千もの素材が必要です。できる範囲で協力をお願いします。',
+  },
+  {
+    title: '新コンテンツは本気で',
+    body: 'アビスやレイドは積極的にみんなで行きましょう。',
+  },
+];
+---
+
+<Base title="ギルドについて" current="about">
+  <div class="page">
+    <h1 class="page-title">ギルドについて</h1>
+    <p class="page-lead">
+      鈴音神楽は、マビノギモバイル{SITE.server}サーバーのギルドです。ガチすぎず、でも新コンテンツはみんなで本気で楽しむ。そんな場所を目指しています。
+    </p>
+
+    <section aria-labelledby="promise-title">
+      <h2 id="promise-title" class="section-title">ギルドの約束</h2>
+      <ul class="promises">
+        {
+          promises.map((p) => (
+            <li>
+              <h3>{p.title}</h3>
+              <p>{p.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section aria-labelledby="ask-title" class="prose">
+      <h2 id="ask-title" class="section-title">お願い</h2>
+      <ul class="asks">
+        <li>Discordのニックネームは、ゲーム内のキャラ名にしてください。</li>
+        <li>他の人を悪く言ったり、晒したりするのはやめましょう。</li>
+        <li>
+          7日間ログインがない場合は、脱退をお願いすることがあります。事情があってしばらくログインできないときは、ひとこと教えてください。
+        </li>
+        <li>困ったことがあれば、ギルマス・サブマスまで気軽にどうぞ。</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="name-title" class="prose">
+      <h2 id="name-title" class="section-title">名前の由来</h2>
+      <p>
+        鈴の音は毎日のあいさつ、神楽はみんなで力を合わせて奉納する舞。毎日顔を出して声をかけ合い、大きなことはみんなでやり遂げる、という思いを込めています。
+      </p>
+      <p><a class="button" href={href('/join/')}>参加方法を見る</a></p>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .promises {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--washi-deep);
+  }
+  .promises li {
+    padding: 1.25rem 1rem 1.25rem 0;
+    border-bottom: 1px solid var(--washi-deep);
+  }
+  .promises h3 {
+    font-size: 1.15rem;
+    color: var(--beni);
+  }
+  .promises p {
+    margin: 0.35rem 0 0;
+  }
+  .asks {
+    padding-left: 1.2rem;
+    margin: 0;
+  }
+  .asks li + li {
+    margin-top: 0.5rem;
+  }
+</style>

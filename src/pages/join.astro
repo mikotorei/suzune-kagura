@@ -1,0 +1,99 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, href } from '../consts';
+---
+
+<Base
+  title="参加方法"
+  current="join"
+  description={`ギルド「鈴音神楽」への参加方法。マビノギモバイル${SITE.server}サーバーで加入申請をして、Discordに参加するまでの流れです。`}
+>
+  <div class="page">
+    <h1 class="page-title">参加方法</h1>
+    <p class="page-lead">ゲーム内でギルドに入ってから、Discordに参加する流れです。</p>
+
+    <ol class="steps">
+      <li>
+        <h2>ゲーム内でギルドに加入申請する</h2>
+        <p>
+          {SITE.server}サーバーで「鈴音神楽」を検索して、加入申請をしてください。ギルド機能は、メインクエスト「冒険者ギルド」をクリアすると使えるようになります。
+        </p>
+      </li>
+      <li>
+        <h2>ギルド告知の合言葉を確認する</h2>
+        <p>ギルドに入ると、ゲーム内のギルド告知で合言葉が見られます。</p>
+      </li>
+      <li>
+        <h2>合言葉ページでDiscordのリンクを開く</h2>
+        <p>
+          <a href={href('/aikotoba/')}>合言葉ページ</a>で合言葉を入力すると、Discordへの招待リンクが表示されます。
+        </p>
+      </li>
+      <li>
+        <h2>Discordで「参加する」ボタンを押す</h2>
+        <p>
+          はじめにチャンネルの「参加する」ボタンから、ゲーム内のキャラ名を入力してください。ギルドのチャンネルが見えるようになったら、雑談でひとことご挨拶を。
+        </p>
+      </li>
+    </ol>
+
+    <p class="note prose">
+      合言葉がわからないときは、ゲーム内のギルドチャットでギルマス・サブマスに声をかけてください。
+    </p>
+  </div>
+</Base>
+
+<style>
+  .steps {
+    list-style: none;
+    counter-reset: step;
+    margin: 0;
+    padding: 0;
+    max-width: 42rem;
+  }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding: 0 0 2rem 3.75rem;
+  }
+  /* 手順を紐でつなぐ */
+  .steps li::after {
+    content: '';
+    position: absolute;
+    left: 1.2rem;
+    top: 2.6rem;
+    bottom: 0.3rem;
+    width: 2px;
+    background: var(--sakura);
+  }
+  .steps li:last-child::after {
+    display: none;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--beni);
+    color: var(--washi);
+    font-family: var(--font-mincho);
+    font-weight: 800;
+    font-size: 1.15rem;
+  }
+  .steps h2 {
+    font-size: 1.2rem;
+    padding-top: 0.25rem;
+  }
+  .steps p {
+    margin: 0.4rem 0 0;
+  }
+  .note {
+    color: var(--sumi-soft);
+    font-size: 0.95rem;
+  }
+</style>

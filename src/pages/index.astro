@@ -1,0 +1,186 @@
+---
+import Base from '../layouts/Base.astro';
+import ArticleList from '../components/ArticleList.astro';
+import { SITE, href } from '../consts';
+import { getPublishedArticles } from '../lib/articles';
+
+const latest = (await getPublishedArticles()).slice(0, 3);
+---
+
+<Base>
+  <section class="hero wood" aria-labelledby="hero-title">
+    <div class="hero-inner">
+      <img
+        class="emblem"
+        src={href('/images/emblem.webp')}
+        alt="鈴音神楽のギルド紋。桜と鳥居、川を行く舟、神楽紐の付いた鈴が描かれている"
+        width="720"
+        height="720"
+      />
+      <div class="hero-text">
+        <h1 id="hero-title" class="vertical-title">鈴音神楽</h1>
+        <p class="vertical-sub">{SITE.server}のギルド</p>
+      </div>
+    </div>
+    <div class="hero-foot">
+      <p class="lead">
+        忙しい日はオートでゆるく、新コンテンツはみんなで本気で。<br />
+        戦闘力は問いません。初心者さんも大歓迎です。
+      </p>
+      <div class="actions">
+        <a class="button" href={href('/join/')}>参加方法を見る</a>
+        <a class="button ghost" href={href('/about/')}>ギルドについて</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="page">
+    <section aria-labelledby="facts-title">
+      <h2 id="facts-title" class="section-title">ギルドのようす</h2>
+      <dl class="facts">
+        <div>
+          <dt>サーバー</dt>
+          <dd>{SITE.server}</dd>
+        </div>
+        <div>
+          <dt>雰囲気</dt>
+          <dd>ガチすぎず、アビスやレイドは積極的に</dd>
+        </div>
+        <div>
+          <dt>参加の条件</dt>
+          <dd>戦闘力不問。毎日ログインと、ときどきのひとことを</dd>
+        </div>
+        <div>
+          <dt>みんなで</dt>
+          <dd>ギルド艦船に向けて製作・採集の素材を集めています</dd>
+        </div>
+        <div>
+          <dt>連絡</dt>
+          <dd>Discordで情報共有・パーティ募集・お知らせ</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="latest-title">
+      <h2 id="latest-title" class="section-title">新しい記事</h2>
+      <ArticleList articles={latest} />
+      <p class="more"><a href={href('/articles/')}>記事をすべて見る</a></p>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .hero {
+    border-bottom: 3px solid var(--kin);
+    padding: 2.5rem var(--gutter) 2.5rem;
+    overflow: hidden;
+  }
+  .hero-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1rem, 5vw, 3.5rem);
+    max-width: 46rem;
+    margin-inline: auto;
+  }
+  .emblem {
+    flex: none;
+    width: min(56vw, 22rem);
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.45));
+  }
+
+  /* 紅の神楽紐が上から垂れ、その横に縦書きのギルド名 */
+  .hero-text {
+    flex: none;
+    position: relative;
+    display: flex;
+    gap: 0.6rem;
+    padding-top: 1.5rem;
+    align-self: stretch;
+    align-items: flex-start;
+  }
+  .hero-text::before {
+    content: '';
+    position: absolute;
+    top: -2.5rem;
+    right: -0.9rem;
+    width: 4px;
+    height: calc(100% + 2.5rem);
+    background: linear-gradient(180deg, var(--beni) 80%, transparent);
+    border-radius: 2px;
+  }
+  .vertical-title {
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+    text-wrap: nowrap;
+    font-weight: 800;
+    font-size: clamp(2.6rem, 9vw, 4.5rem);
+    letter-spacing: 0.25em;
+    line-height: 1;
+    color: var(--washi);
+    text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+  }
+  .vertical-sub {
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+    margin: 0.4rem 0 0;
+    font-family: var(--font-mincho);
+    font-size: clamp(0.85rem, 2.6vw, 1rem);
+    letter-spacing: 0.3em;
+    color: var(--kin-light);
+  }
+
+  .hero-foot {
+    max-width: 46rem;
+    margin: 2rem auto 0;
+    text-align: center;
+  }
+  .lead {
+    word-break: auto-phrase;
+    text-wrap: balance;
+    font-family: var(--font-mincho);
+    font-weight: 500;
+    font-size: clamp(1rem, 3.2vw, 1.15rem);
+    line-height: 2;
+    margin: 0 0 1.5rem;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .facts {
+    margin: 0;
+    max-width: 44rem;
+  }
+  .facts div {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--washi-deep);
+  }
+  .facts div:first-child {
+    border-top: 1px solid var(--washi-deep);
+  }
+  dt {
+    font-family: var(--font-mincho);
+    font-weight: 700;
+    color: var(--beni);
+  }
+  dd {
+    margin: 0;
+  }
+  .more {
+    margin-top: 1.25rem;
+  }
+
+  @media (max-width: 30rem) {
+    .facts div {
+      grid-template-columns: 1fr;
+      gap: 0.1rem;
+    }
+  }
+</style>

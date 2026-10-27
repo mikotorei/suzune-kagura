@@ -1,0 +1,201 @@
+/* 鈴音神楽 ― アイコンの「木の額・和紙・紅・金・桜」から取った配色 */
+:root {
+  --washi: #f6eee6;      /* 背景：桜色がかった和紙 */
+  --washi-deep: #ede0d3; /* 和紙の影・区切り */
+  --sumi: #2b201b;       /* 本文：墨 */
+  --sumi-soft: #6a564b;  /* 補足の文字 */
+  --beni: #9b1e2b;       /* 紅：神楽紐、リンク、ボタン */
+  --beni-deep: #7a1520;
+  --kin: #a9823a;        /* 金：額縁、細い線 */
+  --kin-light: #d8b86c;
+  --sakura: #ebc2c7;     /* 桜：カテゴリーの札 */
+  --ki: #31221b;         /* 木：ヘッダー・フッター・トップの額 */
+  --ki-light: #4b3428;
+
+  --font-mincho: 'Shippori Mincho B1', 'Yu Mincho', 'YuMincho', 'Hiragino Mincho ProN', serif;
+  --font-gothic: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+
+  --measure: 38rem; /* 日本語で1行あたり約36文字 */
+  --gutter: 1.25rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--washi);
+  color: var(--sumi);
+  font-family: var(--font-gothic);
+  font-size: 1rem;
+  line-height: 1.9;
+  font-feature-settings: 'palt' 0;
+  overflow-wrap: anywhere;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: var(--beni);
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+a:hover {
+  color: var(--beni-deep);
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--kin);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: 0.04em;
+  margin: 0;
+  word-break: auto-phrase;
+  text-wrap: balance;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0.5rem;
+  background: var(--washi);
+  padding: 0.5rem 1rem;
+  z-index: 10;
+}
+.skip-link:focus {
+  left: 0.5rem;
+}
+
+/* 木の地：ヘッダー・フッター・トップの額で共通 */
+.wood {
+  background-color: var(--ki);
+  background-image:
+    repeating-linear-gradient(
+      93deg,
+      rgba(255, 235, 210, 0.025) 0 2px,
+      transparent 2px 9px,
+      rgba(0, 0, 0, 0.06) 9px 10px,
+      transparent 10px 23px
+    ),
+    linear-gradient(180deg, var(--ki-light), var(--ki));
+  color: var(--washi);
+}
+
+/* ページ本文の幅 */
+.page {
+  width: min(100% - var(--gutter) * 2, 60rem);
+  margin-inline: auto;
+}
+.prose {
+  max-width: var(--measure);
+}
+
+/* ページの見出し：紅い神楽紐の線が左に垂れる */
+.page-title {
+  font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+  padding: 0.1rem 0 0.1rem 1rem;
+  border-left: 4px solid var(--beni);
+  margin-top: 3rem;
+}
+.page-lead {
+  color: var(--sumi-soft);
+  margin: 0.75rem 0 2.5rem 1.25rem;
+  max-width: var(--measure);
+}
+
+.section-title {
+  font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+  margin: 3rem 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+/* 見出しの頭に付く小さな鈴 */
+.section-title::before {
+  content: '';
+  flex: none;
+  width: 0.85em;
+  height: 0.85em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--kin-light), var(--kin) 60%, #6e5422);
+  box-shadow: inset 0 -0.12em 0 rgba(0, 0, 0, 0.25);
+}
+
+/* ボタン */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 999px;
+  font-family: var(--font-gothic);
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  border: 2px solid var(--beni);
+  background: var(--beni);
+  color: var(--washi);
+  cursor: pointer;
+}
+.button:hover {
+  background: var(--beni-deep);
+  border-color: var(--beni-deep);
+  color: var(--washi);
+  text-decoration: none;
+}
+.button.ghost {
+  background: transparent;
+  color: inherit;
+  border-color: currentColor;
+}
+.button.ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* カテゴリーの札（桜色） */
+.tag {
+  display: inline-block;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  padding: 0 0.6rem;
+  border-radius: 3px;
+  background: var(--sakura);
+  color: var(--beni-deep);
+  font-weight: 700;
+  text-decoration: none;
+}
+a.tag:hover {
+  background: var(--beni);
+  color: var(--washi);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

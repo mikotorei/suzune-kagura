@@ -1,0 +1,26 @@
+---
+import Base from '../../../layouts/Base.astro';
+import ArticleList from '../../../components/ArticleList.astro';
+import CategoryNav from '../../../components/CategoryNav.astro';
+import { CATEGORIES, CATEGORY_SLUGS } from '../../../consts';
+import { getPublishedArticles } from '../../../lib/articles';
+
+export async function getStaticPaths() {
+  const articles = await getPublishedArticles();
+  return CATEGORIES.map((category) => ({
+    params: { category: CATEGORY_SLUGS[category] },
+    props: { category, articles: articles.filter((a) => a.data.category === category) },
+  }));
+}
+
+const { category, articles } = Astro.props;
+---
+
+<Base title={`${category}の記事`} current="articles">
+  <div class="page">
+    <h1 class="page-title">{category}</h1>
+    <p class="page-lead">「{category}」の記事の一覧です。</p>
+    <CategoryNav current={category} />
+    <ArticleList articles={articles} />
+  </div>
+</Base>

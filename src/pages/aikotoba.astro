@@ -1,0 +1,156 @@
+---
+import Base from '../layouts/Base.astro';
+import invite from '../data/invite.json';
+import { href } from '../consts';
+
+const ready = 'data' in invite;
+---
+
+<Base title="合言葉" current="aikotoba" description="ギルドメンバー向けのページです。">
+  <meta name="robots" content="noindex" slot="head" />
+  <div class="page">
+    <h1 class="page-title">合言葉</h1>
+    <p class="page-lead">
+      ゲーム内のギルド告知にある合言葉を入力すると、Discordサーバーへの招待リンクが表示されます。
+    </p>
+
+    {
+      ready ? (
+        <form id="aikotoba-form" class="form" data-invite={JSON.stringify(invite)}>
+          <label for="passphrase">合言葉</label>
+          <div class="row">
+            <input
+              id="passphrase"
+              name="passphrase"
+              type="text"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              required
+              aria-describedby="result"
+            />
+            <button class="button" type="submit">リンクを表示</button>
+          </div>
+          <div id="result" class="result" role="status" aria-live="polite" />
+        </form>
+      ) : (
+        <p class="prepare">
+          合言葉ページは準備中です。Discordに参加したい方は、ゲーム内のギルドチャットでギルマスに声をかけてください。
+        </p>
+      )
+    }
+
+    <p class="note prose">
+      ギルドへの入り方は<a href={href('/join/')}>参加方法</a>をご覧ください。
+    </p>
+  </div>
+</Base>
+
+<script>
+  import { decryptInvite, type InviteData } from '../lib/aikotoba';
+
+  const form = document.querySelector<HTMLFormElement>('#aikotoba-form');
+  if (form) {
+    const invite = JSON.parse(form.dataset.invite ?? '{}') as InviteData;
+    const input = form.querySelector<HTMLInputElement>('#passphrase')!;
+    const button = form.querySelector<HTMLButtonElement>('button')!;
+    const result = form.querySelector<HTMLDivElement>('#result')!;
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      button.disabled = true;
+      button.textContent = '確認しています';
+      result.className = 'result';
+      result.textContent = '';
+
+      const url = await decryptInvite(input.value, invite);
+
+      button.disabled = false;
+      button.textContent = 'リンクを表示';
+
+      if (url) {
+        result.classList.add('ok');
+        const message = document.createElement('p');
+        message.textContent = '合言葉が確認できました。下のボタンからDiscordに参加してください。';
+        const link = document.createElement('a');
+        link.className = 'button';
+        link.href = url;
+        link.rel = 'noopener';
+        link.textContent = 'Discordに参加する';
+        result.append(message, link);
+      } else {
+        result.classList.add('ng');
+        result.textContent =
+          '合言葉が違います。ゲーム内のギルド告知の合言葉を、そのまま入力してください。';
+        input.focus();
+        input.select();
+      }
+    });
+  }
+</script>
+
+<style>
+  .form {
+    max-width: 34rem;
+    padding: 1.5rem;
+    background: #fbf6f1;
+    border: 1px solid var(--washi-deep);
+    border-top: 4px solid var(--beni);
+  }
+  label {
+    display: block;
+    font-family: var(--font-mincho);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  input {
+    flex: 1 1 12rem;
+    min-height: 3rem;
+    padding: 0.5rem 0.9rem;
+    font: inherit;
+    font-size: 1.05rem;
+    color: var(--sumi);
+    background: var(--washi);
+    border: 2px solid var(--washi-deep);
+    border-radius: 6px;
+  }
+  input:focus {
+    border-color: var(--kin);
+    outline: none;
+  }
+  button[disabled] {
+    opacity: 0.7;
+    cursor: wait;
+  }
+  .result:empty {
+    display: none;
+  }
+  .result {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--washi-deep);
+  }
+  .result :global(p) {
+    margin: 0 0 0.75rem;
+  }
+  .result.ng {
+    color: var(--beni);
+    font-weight: 700;
+  }
+  .prepare {
+    max-width: var(--measure);
+    padding: 1.25rem 1.5rem;
+    background: #fbf6f1;
+    border-left: 4px solid var(--kin);
+  }
+  .note {
+    margin-top: 2rem;
+    color: var(--sumi-soft);
+    font-size: 0.95rem;
+  }
+</style>
