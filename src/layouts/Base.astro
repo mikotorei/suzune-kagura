@@ -18,6 +18,8 @@ const { title, description = SITE.description, current } = Astro.props;
 const pageTitle = title ? `${title}｜${SITE.name}` : `${SITE.name}｜マビノギモバイル ギルド`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(href('/images/og.jpg'), Astro.site);
+// アナリティクスは本番ビルド（npm run build）のときだけ入れる。npm run dev の確認では数えない
+const gaId = import.meta.env.PROD ? SITE.gaId : '';
 
 const nav = [
   { key: 'about', label: 'ギルドについて', path: '/about/' },
@@ -46,6 +48,23 @@ const nav = [
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
     <meta name="twitter:card" content="summary_large_image" />
+    {SITE.gscVerification && <meta name="google-site-verification" content={SITE.gscVerification} />}
+    <link rel="sitemap" href={href('/sitemap.xml')} />
+    {
+      gaId && (
+        <>
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+          <script is:inline define:vars={{ gaId }}>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', gaId);
+          </script>
+        </>
+      )
+    }
     <slot name="head" />
   </head>
   <body>
@@ -83,6 +102,12 @@ const nav = [
         <p class="notice">
           当サイトは、マビノギモバイルのプレイヤーが運営する非公式のファンサイトです。株式会社ネクソンおよび公式とは関係ありません。
           ゲームの内容に関する最新情報は<a href="https://mabinogimobile.nexon.co.jp/" rel="noopener">マビノギモバイル公式サイト</a>をご確認ください。
+        </p>
+        <p class="notice">
+          当サイトではアクセス状況の把握のためにGoogleアナリティクスを使用しています。Cookieを使ってデータを集めますが、個人を特定する情報は含みません。詳しくは<a
+            href="https://policies.google.com/technologies/partner-sites?hl=ja"
+            rel="noopener">Googleのポリシーと規約</a
+          >をご覧ください。
         </p>
       </div>
     </footer>
@@ -181,6 +206,9 @@ const nav = [
     color: #d9c9bb;
     max-width: 42rem;
     margin: 0;
+  }
+  .notice + .notice {
+    margin-top: 0.75rem;
   }
   .notice a {
     color: var(--kin-light);

@@ -6,7 +6,17 @@ export const SITE = {
     'マビノギモバイル トゥガルドアイルサーバーのギルド「鈴音神楽」の非公式ファンサイト。ギルドの紹介と、メンバーで集めた攻略情報をまとめています。',
   server: 'トゥガルドアイル',
   xUrl: '', // ギルドのXアカウントができたらURLを入れる
+  /** Googleアナリティクスの測定ID（G-から始まる）。空欄なら計測タグを出さない */
+  gaId: '',
+  /** Search Consoleの確認コード（HTMLタグの content="…" の中身）。空欄なら出さない */
+  gscVerification: '',
 };
+
+/**
+ * サイトマップに載せないページ（noindex のページなど）。
+ * BASE_URL を付けない形で書く
+ */
+export const SITEMAP_EXCLUDE = ['/aikotoba/'];
 
 /**
  * 記事のカテゴリー。増やすときはここに足すだけでOK
