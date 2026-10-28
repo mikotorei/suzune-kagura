@@ -7,9 +7,9 @@ export const SITE = {
   server: 'トゥガルドアイル',
   xUrl: '', // ギルドのXアカウントができたらURLを入れる
   /** Googleアナリティクスの測定ID（G-から始まる）。空欄なら計測タグを出さない */
-  gaId: '',
+  gaId: 'G-TV02QWE34W',
   /** Search Consoleの確認コード（HTMLタグの content="…" の中身）。空欄なら出さない */
-  gscVerification: '',
+  gscVerification: 'oLwgPS7bRYTIy8F3EJxubNONedcQwLjlD8-m6a2NxiY',
 };
 
 /**
