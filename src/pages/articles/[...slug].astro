@@ -1,8 +1,8 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { categoryHref, formatDate, href } from '../../consts';
-import { getPublishedArticles } from '../../lib/articles';
+import { categoryHref, formatDate, formatMonthDay, href } from '../../consts';
+import { eventDateOf, getPublishedArticles } from '../../lib/articles';
 
 export async function getStaticPaths() {
   const articles = await getPublishedArticles();
@@ -12,6 +12,8 @@ export async function getStaticPaths() {
 const { article } = Astro.props;
 const { Content } = await render(article);
 const { title, date, category, author, description } = article.data;
+const eventDate = eventDateOf(article);
+const writtenLater = eventDate.getTime() !== date.getTime();
 ---
 
 <Base title={title} description={description} current="articles">
@@ -20,7 +22,8 @@ const { title, date, category, author, description } = article.data;
       <a class="tag" href={categoryHref(category)}>{category}</a>
       <h1>{title}</h1>
       <p class="meta">
-        <time datetime={date.toISOString()}>{formatDate(date)}</time>
+        <time datetime={eventDate.toISOString()}>{formatDate(eventDate)}のできごと</time>
+        {writtenLater && <span>{formatMonthDay(date)}公開</span>}
         <span>{author}</span>
       </p>
     </header>
@@ -89,7 +92,17 @@ const { title, date, category, author, description } = article.data;
   }
   .body :global(img) {
     border-radius: 4px;
-    margin: 0.5rem 0 1.5rem;
+    margin: 0.5rem 0 0.5rem;
+    width: 100%;
+  }
+  /* 画像だけの段落の次の段落は、画像の説明として少し小さく */
+  .body :global(p:has(> img:only-child)) {
+    margin-bottom: 0.25rem;
+  }
+  .body :global(p:has(> img:only-child) + p) {
+    font-size: 0.95rem;
+    color: var(--sumi-soft);
+    margin-bottom: 2rem;
   }
   .body :global(table) {
     width: 100%;

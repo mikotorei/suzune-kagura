@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { categoryHref, formatDate, href } from '../consts';
+import { categoryHref, formatDate, formatMonthDay, href } from '../consts';
+import { eventDateOf } from '../lib/articles';
 
 interface Props {
   articles: CollectionEntry<'articles'>[];
@@ -21,7 +22,10 @@ const { articles } = Astro.props;
               <a class="tag" href={categoryHref(article.data.category)}>
                 {article.data.category}
               </a>
-              <time datetime={article.data.date.toISOString()}>{formatDate(article.data.date)}</time>
+              <time datetime={eventDateOf(article).toISOString()}>{formatDate(eventDateOf(article))}のできごと</time>
+              {article.data.eventDate && article.data.eventDate.getTime() !== article.data.date.getTime() && (
+                <span class="posted">{formatMonthDay(article.data.date)}公開</span>
+              )}
             </div>
             <h3>
               <a href={href(`/articles/${article.id}/`)}>{article.data.title}</a>
@@ -69,6 +73,9 @@ const { articles } = Astro.props;
     color: var(--sumi-soft);
     font-size: 0.95rem;
     max-width: var(--measure);
+  }
+  .posted {
+    font-size: 0.78rem;
   }
   .empty {
     color: var(--sumi-soft);

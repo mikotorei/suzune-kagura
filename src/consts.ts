@@ -3,7 +3,7 @@ export const SITE = {
   name: '鈴音神楽',
   reading: 'すずねかぐら',
   description:
-    'マビノギモバイル トゥガルドアイルサーバーのギルド「鈴音神楽」の非公式ファンサイト。ギルドの紹介と、メンバーで集めた攻略情報をまとめています。',
+    'マビノギモバイル トゥガルドアイルサーバーのギルド「鈴音神楽」の非公式ファンサイト。ギルドの紹介と、日々の活動の記録を載せています。',
   server: 'トゥガルドアイル',
   xUrl: '', // ギルドのXアカウントができたらURLを入れる
   /** Googleアナリティクスの測定ID（G-から始まる）。空欄なら計測タグを出さない */
@@ -22,16 +22,14 @@ export const SITEMAP_EXCLUDE = ['/aikotoba/'];
  * 記事のカテゴリー。増やすときはここに足すだけでOK
  * （記事の category にはここにある名前しか使えません）
  */
-export const CATEGORIES = ['ギルド日記', '攻略', 'ビルド', '艦船', '生活スキル'] as const;
+export const CATEGORIES = ['ギルド日記', 'イベント', 'お知らせ'] as const;
 export type Category = (typeof CATEGORIES)[number];
 
 /** カテゴリーページのURL（半角英字）。カテゴリーを足したらここにも足す */
 export const CATEGORY_SLUGS: Record<Category, string> = {
   ギルド日記: 'diary',
-  攻略: 'guide',
-  ビルド: 'build',
-  艦船: 'ship',
-  生活スキル: 'life',
+  イベント: 'event',
+  お知らせ: 'news',
 };
 
 export function categoryHref(category: Category): string {
@@ -42,6 +40,11 @@ export function categoryHref(category: Category): string {
 export function href(path = '/'): string {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   return `${base}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
+/** 11月18日 の形（年なし）で日付を表示する */
+export function formatMonthDay(date: Date): string {
+  return new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric', timeZone: 'Asia/Tokyo' }).format(date);
 }
 
 /** 2026年10月28日 の形で日付を表示する */
