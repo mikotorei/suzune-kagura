@@ -7,7 +7,7 @@ import { getPublishedArticles } from '../lib/articles';
  * 記事やカテゴリーは自動で載る。固定ページを増やしたら pages に足す
  */
 export const GET: APIRoute = async ({ site }) => {
-  const pages = ['/', '/about/', '/join/', '/aikotoba/', '/articles/'];
+  const pages = ['/', '/about/', '/aikotoba/', '/articles/'];
   const articles = await getPublishedArticles();
 
   const entries: { path: string; lastmod?: Date }[] = [
