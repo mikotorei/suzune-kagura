@@ -22,14 +22,19 @@ export const SITEMAP_EXCLUDE = ['/aikotoba/'];
  * 記事のカテゴリー。増やすときはここに足すだけでOK
  * （記事の category にはここにある名前しか使えません）
  */
-export const CATEGORIES = ['ギルド日記', 'イベント', 'お知らせ'] as const;
+export const CATEGORIES = ['神楽だより', '巫女のひとりごと'] as const;
 export type Category = (typeof CATEGORIES)[number];
 
 /** カテゴリーページのURL（半角英字）。カテゴリーを足したらここにも足す */
 export const CATEGORY_SLUGS: Record<Category, string> = {
-  ギルド日記: 'diary',
-  イベント: 'event',
-  お知らせ: 'news',
+  神楽だより: 'dayori',
+  巫女のひとりごと: 'hitorigoto',
+};
+
+/** カテゴリーページの説明文。迷ったら「主語がみんなか、ギルマスか」で分ける */
+export const CATEGORY_LEADS: Record<Category, string> = {
+  神楽だより: 'みんなで遊んだこと、ギルドのできごとの記録です。',
+  巫女のひとりごと: 'ギルマスが整えたことや、伝えたいことを気ままに書いています。',
 };
 
 export function categoryHref(category: Category): string {

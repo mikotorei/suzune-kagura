@@ -12,7 +12,7 @@ const { articles } = Astro.props;
 
 {
   articles.length === 0 ? (
-    <p class="empty">まだ記事がありません。最初の一本をお待ちしています。</p>
+    <p class="empty">まだ記事がありません。これから少しずつ載せていきます。</p>
   ) : (
     <ul class="list">
       {articles.map((article) => (
@@ -51,8 +51,9 @@ const { articles } = Astro.props;
   }
   .meta {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.3rem 0.75rem;
     font-size: 0.85rem;
     color: var(--sumi-soft);
   }
@@ -73,6 +74,9 @@ const { articles } = Astro.props;
     color: var(--sumi-soft);
     font-size: 0.95rem;
     max-width: var(--measure);
+  }
+  .meta > * {
+    white-space: nowrap;
   }
   .posted {
     font-size: 0.78rem;

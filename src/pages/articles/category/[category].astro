@@ -2,7 +2,7 @@
 import Base from '../../../layouts/Base.astro';
 import ArticleList from '../../../components/ArticleList.astro';
 import CategoryNav from '../../../components/CategoryNav.astro';
-import { CATEGORIES, CATEGORY_SLUGS } from '../../../consts';
+import { CATEGORIES, CATEGORY_LEADS, CATEGORY_SLUGS } from '../../../consts';
 import { getPublishedArticles } from '../../../lib/articles';
 
 export async function getStaticPaths() {
@@ -16,10 +16,10 @@ export async function getStaticPaths() {
 const { category, articles } = Astro.props;
 ---
 
-<Base title={`${category}の記事`} current="articles">
+<Base title={category} current="articles" description={`鈴音神楽の「${category}」。${CATEGORY_LEADS[category]}`}>
   <div class="page">
     <h1 class="page-title">{category}</h1>
-    <p class="page-lead">「{category}」の記事の一覧です。</p>
+    <p class="page-lead">{CATEGORY_LEADS[category]}</p>
     <CategoryNav current={category} />
     <ArticleList articles={articles} />
   </div>

@@ -7,10 +7,10 @@ import { getPublishedArticles } from '../../lib/articles';
 const articles = await getPublishedArticles();
 ---
 
-<Base title="記事" current="articles" description="鈴音神楽の出来事やイベントの記録。">
+<Base title="記事" current="articles" description="鈴音神楽のできごとと、ギルマスのひとりごと。">
   <div class="page">
     <h1 class="page-title">記事</h1>
-    <p class="page-lead">鈴音神楽の出来事やイベントの記録です。</p>
+    <p class="page-lead">ギルドのできごとと、ギルマスのひとりごとを載せています。</p>
     <CategoryNav />
     <ArticleList articles={articles} />
   </div>
