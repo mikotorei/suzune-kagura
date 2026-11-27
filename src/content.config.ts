@@ -19,4 +19,36 @@ const articles = defineCollection({
   }),
 });
 
-export const collections = { articles };
+/**
+ * 写真館の写真（src/content/photos/*.yaml）。1枚につき1ファイル。
+ * room を書いた写真が「展示品」で、専用の展示室ができる。
+ * 画像は public/images/photos/<image>-full.webp と <image>-thumb.webp（scripts/photo.py で作る）
+ */
+const photos = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.yaml', base: './src/content/photos' }),
+  schema: z.object({
+    /** 提供された日 */
+    date: z.coerce.date(),
+    /** 画像のファイル名（-full / -thumb の前まで） */
+    image: z.string(),
+    width: z.number().int().positive(),
+    height: z.number().int().positive(),
+    /** 写真の説明（読み上げ用）。中身を書けないときは「メンバーのスクリーンショット」 */
+    alt: z.string().default('鈴音神楽のメンバーのスクリーンショット'),
+    /** 展示室の番号。展示品だけ書く */
+    room: z.number().int().positive().optional(),
+    /** ひとこと（展示品） */
+    comment: z.string().optional(),
+    /** 展示室に出す提供者の名前。書かなければ名前なし */
+    name: z.string().optional(),
+    /** 本人が希望したときだけ。x.com のアカウントのアドレスに限る */
+    x: z
+      .string()
+      .regex(/^https:\/\/(x|twitter)\.com\/[A-Za-z0-9_]{1,15}\/?$/, 'x.com のアカウントのアドレスだけ書けます')
+      .optional(),
+    /** テスト用の写真。PHOTO_TEST=1 で動かしたときだけ出す */
+    test: z.boolean().default(false),
+  }),
+});
+
+export const collections = { articles, photos };

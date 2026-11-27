@@ -1,0 +1,205 @@
+---
+import Base from '../../layouts/Base.astro';
+import { href } from '../../consts';
+import { fullOf, getPhotos, roomName, roomPath, thumbOf } from '../../lib/photos';
+
+const photos = await getPhotos();
+const exhibitCount = photos.filter((photo) => photo.data.room).length;
+/** 壁に飾る写真の傾き（くり返し使う） */
+const TILTS = [-3, 2, -1.5, 2.5, -2, 1.5, -2.5, 3];
+---
+
+<Base title="写真館" current="gallery" description="鈴音神楽のメンバーが撮った写真を飾る写真館です。">
+  <div class="page">
+    <h1 class="page-title">写真館</h1>
+    <p class="page-lead">
+      メンバーが撮ってくれた、ギルドのふだんの様子です。金の額縁の写真は展示室につながっています。
+    </p>
+
+    {
+      photos.length === 0 ? (
+        <p class="empty">これから少しずつ飾っていきます。</p>
+      ) : (
+        <>
+          <p class="count">
+            {photos.length}枚の写真{exhibitCount > 0 && `（展示室 ${exhibitCount}室）`}
+          </p>
+          <ul class="wall">
+            {photos.map((photo, i) => {
+              const tilt = `--r:${TILTS[i % TILTS.length]}deg`;
+              const img = (
+                <img src={thumbOf(photo)} alt={photo.data.alt} width="640" height="480" loading="lazy" decoding="async" />
+              );
+              return (
+                <li style={tilt}>
+                  {photo.data.room ? (
+                    <a class="snap exhibit" href={href(roomPath(photo.data.room))}>
+                      {img}
+                      <span class="plate">{roomName(photo.data.room)}</span>
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      class="snap"
+                      data-full={fullOf(photo)}
+                      data-alt={photo.data.alt}
+                      aria-label="写真を大きく見る"
+                    >
+                      {img}
+                    </button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )
+    }
+  </div>
+
+  <!-- 展示品でない写真は、その場で大きく見せる -->
+  <dialog class="viewer" aria-label="写真を大きく見る">
+    <img src="" alt="" />
+    <form method="dialog">
+      <button class="close button ghost" aria-label="閉じる">閉じる</button>
+    </form>
+  </dialog>
+</Base>
+
+<script>
+  const viewer = document.querySelector<HTMLDialogElement>('.viewer');
+  const big = viewer?.querySelector('img');
+  document.querySelectorAll<HTMLButtonElement>('.wall button[data-full]').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (!viewer || !big) return;
+      big.src = button.dataset.full ?? '';
+      big.alt = button.dataset.alt ?? '';
+      viewer.showModal();
+    });
+  });
+  // 写真の外側を押しても閉じる
+  viewer?.addEventListener('click', (event) => {
+    if (event.target === viewer) viewer.close();
+  });
+</script>
+
+<style>
+  .count {
+    margin: -1.5rem 0 1.5rem 1.25rem;
+    font-size: 0.9rem;
+    color: var(--sumi-soft);
+  }
+  .empty {
+    margin-left: 1.25rem;
+  }
+
+  /* 写真を傾けて壁に並べる */
+  .wall {
+    list-style: none;
+    margin: 0 0 4rem;
+    padding: 1rem 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 2.2rem 1.6rem;
+  }
+  @media (max-width: 30rem) {
+    .wall {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.6rem 1rem;
+    }
+  }
+  .wall li {
+    transform: rotate(var(--r, 0deg));
+    transition: transform 0.2s ease;
+  }
+  .wall li:hover,
+  .wall li:focus-within {
+    transform: rotate(0deg) scale(1.03);
+    z-index: 1;
+  }
+
+  .snap {
+    display: block;
+    width: 100%;
+    position: relative;
+    padding: 0.45rem 0.45rem 1.2rem;
+    background: #fffaf4;
+    border: 0;
+    box-shadow: 0 6px 14px rgba(49, 34, 27, 0.22);
+    cursor: zoom-in;
+    font: inherit;
+    color: inherit;
+    text-decoration: none;
+  }
+  /* マスキングテープ */
+  .snap::before {
+    content: '';
+    position: absolute;
+    top: -0.55rem;
+    left: 50%;
+    width: 3rem;
+    height: 1.05rem;
+    margin-left: -1.5rem;
+    background: rgba(235, 194, 199, 0.8);
+    transform: rotate(-4deg);
+  }
+  .snap img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  /* 展示品：金の額縁と札 */
+  .snap.exhibit {
+    cursor: pointer;
+    background: #fffaf4;
+    outline: 3px solid var(--kin);
+    outline-offset: -3px;
+    padding-bottom: 2.3rem;
+  }
+  .snap.exhibit::before {
+    background: rgba(216, 184, 108, 0.85);
+  }
+  .plate {
+    position: absolute;
+    left: 50%;
+    bottom: 0.45rem;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-family: var(--font-mincho);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: var(--beni);
+  }
+
+  /* 拡大表示 */
+  .viewer {
+    padding: 0.6rem;
+    border: 0;
+    background: #fffaf4;
+    max-width: min(96vw, 64rem);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  }
+  .viewer::backdrop {
+    background: rgba(30, 20, 15, 0.82);
+  }
+  .viewer img {
+    display: block;
+    max-width: 100%;
+    max-height: 80vh;
+    height: auto;
+    margin-inline: auto;
+  }
+  .viewer form {
+    text-align: center;
+    margin-top: 0.6rem;
+  }
+  .close {
+    color: var(--sumi);
+    min-height: 2.4rem;
+    padding-block: 0.3rem;
+  }
+</style>

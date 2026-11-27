@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { CATEGORIES, CATEGORY_SLUGS, SITEMAP_EXCLUDE, href } from '../consts';
 import { getPublishedArticles } from '../lib/articles';
+import { getExhibits, getPhotos, roomPath } from '../lib/photos';
 
 /**
  * Search Console に送るサイトマップ（/suzune-kagura/sitemap.xml）。
@@ -9,11 +10,16 @@ import { getPublishedArticles } from '../lib/articles';
 export const GET: APIRoute = async ({ site }) => {
   const pages = ['/', '/about/', '/aikotoba/', '/articles/'];
   const articles = await getPublishedArticles();
+  const photos = await getPhotos();
+  const exhibits = await getExhibits();
 
   const entries: { path: string; lastmod?: Date }[] = [
     ...pages.map((path) => ({ path })),
     ...CATEGORIES.map((category) => ({ path: `/articles/category/${CATEGORY_SLUGS[category]}/` })),
     ...articles.map((article) => ({ path: `/articles/${article.id}/`, lastmod: article.data.date })),
+    // 写真館は写真が1枚以上あるときだけ載せる
+    ...(photos.length ? [{ path: '/gallery/', lastmod: photos[0]!.data.date }] : []),
+    ...exhibits.map((photo) => ({ path: roomPath(photo.data.room!), lastmod: photo.data.date })),
   ].filter((entry) => !SITEMAP_EXCLUDE.includes(entry.path));
 
   const urls = entries

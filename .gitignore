@@ -2,3 +2,7 @@ node_modules/
 dist/
 .astro/
 .DS_Store
+
+# 写真館のテスト用の写真（手元の確認だけで使い、公開しない）
+public/images/photos/test-*
+src/content/photos/test-*

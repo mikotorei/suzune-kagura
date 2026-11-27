@@ -3,12 +3,29 @@ import Base from '../layouts/Base.astro';
 import ArticleList from '../components/ArticleList.astro';
 import { SITE, href } from '../consts';
 import { getPublishedArticles } from '../lib/articles';
+import { getPhotos, thumbOf } from '../lib/photos';
 
 const latest = (await getPublishedArticles()).slice(0, 3);
+/** ホームの背景に敷く写真の候補（写真館の写真すべて）。並びは開くたびに変わる */
+const allPhotos = (await getPhotos()).map(thumbOf);
+/** 写真がこの枚数に届くまでは背景を敷かない（同じ写真ばかり並んで見えるため） */
+const BACKDROP_MIN_PHOTOS = 4;
+const backdropPool = allPhotos.length >= BACKDROP_MIN_PHOTOS ? allPhotos : [];
+/** 背景のマス目の数。写真が少なければ同じ写真をくり返して埋める */
+const BACKDROP_TILES = 24;
 ---
 
 <Base>
   <section class="hero wood" aria-labelledby="hero-title">
+    {
+      backdropPool.length > 0 && (
+        <div class="backdrop" aria-hidden="true" data-pool={JSON.stringify(backdropPool)}>
+          {Array.from({ length: BACKDROP_TILES }, (_, i) => (
+            <img src={backdropPool[i % backdropPool.length]} alt="" width="640" height="480" decoding="async" />
+          ))}
+        </div>
+      )
+    }
     <div class="hero-inner">
       <img
         class="emblem"
@@ -33,6 +50,21 @@ const latest = (await getPublishedArticles()).slice(0, 3);
       </div>
     </div>
   </section>
+
+  <script>
+    // 開くたびに背景の写真の並びを変える（同じ写真が隣り合いにくいように、混ぜた順でくり返す）
+    const backdrop = document.querySelector<HTMLElement>('.backdrop');
+    if (backdrop?.dataset.pool) {
+      const pool: string[] = JSON.parse(backdrop.dataset.pool);
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j]!, pool[i]!];
+      }
+      backdrop.querySelectorAll('img').forEach((img, i) => {
+        img.src = pool[i % pool.length]!;
+      });
+    }
+  </script>
 
   <div class="page">
     <section aria-labelledby="facts-title">
@@ -71,10 +103,36 @@ const latest = (await getPublishedArticles()).slice(0, 3);
 
 <style>
   .hero {
+    position: relative;
     border-bottom: 3px solid var(--kin);
     padding: 2.5rem var(--gutter) 2.5rem;
     overflow: hidden;
   }
+  /* 背景に、暗くしたメンバーの写真を敷く */
+  .backdrop {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(clamp(9rem, 20vw, 16rem), 1fr));
+    align-content: start;
+    gap: 4px;
+    opacity: 0.22;
+    filter: sepia(0.35);
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .backdrop img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+  .hero-inner,
+  .hero-foot {
+    position: relative;
+  }
+
   .hero-inner {
     display: flex;
     align-items: center;

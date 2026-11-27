@@ -11,7 +11,7 @@ interface Props {
   title?: string;
   description?: string;
   /** ナビで今いる場所を示す */
-  current?: 'about' | 'articles' | 'aikotoba';
+  current?: 'about' | 'articles' | 'gallery' | 'aikotoba';
 }
 
 const { title, description = SITE.description, current } = Astro.props;
@@ -24,6 +24,7 @@ const gaId = import.meta.env.PROD ? SITE.gaId : '';
 const nav = [
   { key: 'about', label: 'ギルドについて', path: '/about/' },
   { key: 'articles', label: '記事', path: '/articles/' },
+  { key: 'gallery', label: '写真館', path: '/gallery/' },
   { key: 'aikotoba', label: '合言葉', path: '/aikotoba/' },
 ] as const;
 ---
